@@ -19,6 +19,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
+ARG API_BACKEND_URL=http://localhost:3001
+ENV API_BACKEND_URL=${API_BACKEND_URL}
 
 RUN npm run build
 
