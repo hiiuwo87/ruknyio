@@ -3,9 +3,6 @@
 # Deploy on DigitalOcean VPS
 # ============================================
 
-env_file:
-  - .env.production
-
 services:
   # ─── PostgreSQL Database ───
   postgres:
