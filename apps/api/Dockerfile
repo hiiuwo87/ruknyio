@@ -10,8 +10,9 @@ WORKDIR /app
 
 COPY package*.json ./
 COPY prisma ./prisma/
-RUN npm install
-RUN npx prisma generate
+# Skip postinstall (prisma generate) during install, run it explicitly after
+RUN npm install --ignore-scripts
+RUN npx prisma generate --config prisma/prisma.config.ts
 
 # --- Builder ---
 FROM base AS builder
@@ -20,7 +21,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Skip prisma generate (already done in deps) and build with more memory
+# Build NestJS with more memory
 RUN NODE_OPTIONS="--max-old-space-size=3072" npx nest build
 
 # --- Runner ---
@@ -39,10 +40,10 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/package*.json ./
 
 # Regenerate prisma client for production runtime
-RUN npx prisma generate
+RUN npx prisma generate --config prisma/prisma.config.ts
 
 USER nestjs
 
 EXPOSE 3001
 
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main"]
+CMD ["sh", "-c", "npx prisma migrate deploy --config prisma/prisma.config.ts && node dist/main"]
