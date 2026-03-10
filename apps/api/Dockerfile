@@ -20,6 +20,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+ENV NODE_OPTIONS="--max-old-space-size=1536"
+
 RUN npx prisma generate
 RUN npm run build
 
