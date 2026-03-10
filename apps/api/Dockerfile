@@ -10,7 +10,7 @@ WORKDIR /app
 
 COPY package*.json ./
 COPY prisma ./prisma/
-RUN npm install --omit=dev
+RUN npm install
 RUN npx prisma generate
 
 # --- Builder ---
@@ -20,10 +20,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-ENV NODE_OPTIONS="--max-old-space-size=1536"
-
-RUN npx prisma generate
-RUN npm run build
+# Skip prisma generate (already done in deps) and build with more memory
+RUN NODE_OPTIONS="--max-old-space-size=3072" npx nest build
 
 # --- Runner ---
 FROM base AS runner
@@ -36,10 +34,11 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nestjs
 
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=deps /app/node_modules ./node_modules
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/package*.json ./
 
+# Regenerate prisma client for production runtime
 RUN npx prisma generate
 
 USER nestjs
