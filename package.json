@@ -1,0 +1,45 @@
+{
+  "name": "rukny-io",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "npm run start:dev --workspace=apps/api",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:admin": "npm run dev --workspace=apps/admin",
+    "build": "npm run build --workspaces",
+    "build:api": "npm run build --workspace=apps/api",
+    "build:web": "npm run build --workspace=apps/web",
+    "start": "npm run start --workspace=apps/web",
+    "start:web": "npm run start --workspace=apps/web",
+    "start:api": "npm run start:prod --workspace=apps/api",
+    "test": "npm run test --workspaces",
+    "lint": "npm run lint --workspaces",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "prepare": "node -e \"if (!process.env.CI) require('child_process').execSync('npx husky', { stdio: 'inherit' })\""
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "concurrently": "^8.2.0",
+    "eslint": "^8.50.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.0.0",
+    "prettier": "^3.0.0",
+    "prisma": "^7.1.0",
+    "typescript": "^5.2.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.1.0",
+    "axios": "^1.13.2",
+    "bcryptjs": "^3.0.3",
+    "rxjs": "^7.8.2"
+  }
+}

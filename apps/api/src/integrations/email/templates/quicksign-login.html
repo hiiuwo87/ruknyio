@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - ركني</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 40px 20px;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 440px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 32px 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #22c55e;
+            margin-bottom: 24px;
+        }
+        .greeting {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        .message {
+            font-size: 16px;
+            color: #4b5563;
+            margin-bottom: 28px;
+        }
+        .button-wrapper {
+            margin: 24px 0;
+        }
+        .expires {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 24px;
+        }
+        .fallback {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 16px;
+            word-break: break-all;
+        }
+        .fallback a {
+            color: #4f46e5;
+            text-decoration: underline;
+        }
+        .divider {
+            height: 1px;
+            background-color: #e5e7eb;
+            margin: 28px 0;
+        }
+        .footer-text {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        .footer-text a {
+            color: #6b7280;
+            text-decoration: underline;
+        }
+        .copyright {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">ركني</div>
+
+        <p class="greeting">مرحباً {{name}}،</p>
+
+        <p class="message">انقر على الزر أدناه لتسجيل الدخول إلى حسابك.</p>
+
+        <!-- زر: رابط واحد مع كل الأنماط مضمنة حتى لا يتحول إلى نص في بعض عملاء البريد -->
+        <p class="button-wrapper" style="margin: 24px 0;">
+            <a href="{{quickSignLink}}" target="_blank" rel="noopener noreferrer"
+               style="display: inline-block; padding: 14px 28px; font-size: 16px; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 8px; background-color: #1a1a1a; border: 1px solid #1a1a1a;">
+                تسجيل الدخول
+            </a>
+        </p>
+
+        <p class="expires">هذا الرابط صالح لمدة 30 دقيقة ولا يُستخدم إلا مرة واحدة.</p>
+
+        <p class="fallback">إذا لم يعمل الزر، انسخ الرابط التالي وافتحه في المتصفح:</p>
+        <p class="fallback" style="margin-top: 8px;">
+            <a href="{{quickSignLink}}" style="color: #4f46e5; text-decoration: underline;">{{quickSignLink}}</a>
+        </p>
+
+        <div class="divider"></div>
+
+        <p class="footer-text">لم تطلب هذا؟ <a href="mailto:support@rukny.io">تواصل معنا</a>.</p>
+
+        <p class="copyright">ركني © 2026</p>
+    </div>
+</body>
+</html>

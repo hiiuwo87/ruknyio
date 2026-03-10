@@ -1,0 +1,56 @@
+# ============================================
+# DEVELOPMENT ENVIRONMENT ONLY
+# This Docker Compose file is for local development.
+# NOT intended for production deployment.
+# ============================================
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database (Development)
+  postgres:
+    image: postgres:14-alpine
+    container_name: rukny_postgres_dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-rukny_admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-rukny_io}
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - rukny_network
+
+  # Redis Cache (Development)
+  redis:
+    image: redis:6-alpine
+    container_name: rukny_redis_dev
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - rukny_network
+
+  # Adminer - Database Management UI (Development Only)
+  adminer:
+    image: adminer
+    container_name: rukny_adminer
+    restart: unless-stopped
+    ports:
+      - '8080:8080'
+    depends_on:
+      - postgres
+    networks:
+      - rukny_network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  rukny_network:
+    driver: bridge

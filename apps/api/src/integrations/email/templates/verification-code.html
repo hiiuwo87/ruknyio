@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رمز التحقق - ركني</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            direction: rtl;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        .header {
+            background: linear-gradient(135deg, #333446 0%, #424560 100%);
+            padding: 30px 20px;
+            text-align: center;
+            color: #ffffff;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .header p {
+            margin: 8px 0 0;
+            font-size: 14px;
+            opacity: 0.85;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .greeting {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+        .message {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 30px;
+        }
+        .alert-box {
+            background-color: #fff8e1;
+            border-right: 4px solid #ffc107;
+            border-radius: 6px;
+            padding: 18px 20px;
+            margin: 24px 0;
+            font-size: 14px;
+            color: #856404;
+        }
+        .alert-box strong {
+            color: #333;
+        }
+        .code-container {
+            background: linear-gradient(135deg, #333446 0%, #424560 100%);
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            margin: 30px 0;
+        }
+        .code-label {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 13px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .verification-code {
+            font-size: 42px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 8px;
+            font-family: 'Courier New', monospace;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 16px 24px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        .code-expiry {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 13px;
+            margin-top: 12px;
+        }
+        .ip-info {
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 18px 20px;
+            margin: 24px 0;
+            font-size: 14px;
+            color: #666;
+            line-height: 1.8;
+        }
+        .ip-info div {
+            margin-bottom: 6px;
+        }
+        .ip-info strong {
+            color: #333;
+        }
+        .security-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e8e8e8;
+            font-size: 13px;
+            color: #888;
+            line-height: 1.8;
+        }
+        .security-footer div {
+            margin-bottom: 4px;
+        }
+        .footer {
+            background-color: #fafafa;
+            padding: 24px;
+            text-align: center;
+            border-top: 1px solid #e8e8e8;
+        }
+        .footer p {
+            margin: 6px 0;
+            color: #666;
+            font-size: 13px;
+        }
+        .footer a {
+            color: #333446;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ركني</h1>
+            <p>منصتك المتكاملة للفعاليات والمتاجر</p>
+        </div>
+        
+        <div class="content">
+            <div class="greeting">
+                رمز التحقق 🔐
+            </div>
+            
+            <div class="alert-box">
+                ⚠️ تم اكتشاف تسجيل دخول من <strong>عنوان IP جديد</strong>. للحفاظ على أمان حسابك، يرجى التحقق من هويتك.
+            </div>
+            
+            <div class="message">
+                إذا كنت أنت من حاول تسجيل الدخول، أدخل الرمز التالي:
+            </div>
+            
+            <div class="code-container">
+                <div class="code-label">رمز التحقق</div>
+                <div class="verification-code">{{code}}</div>
+                <div class="code-expiry">⏱️ صالح لمدة 10 دقائق | 3 محاولات</div>
+            </div>
+            
+            <div class="ip-info">
+                <div><strong>🌍 مقارنة عناوين IP:</strong></div>
+                <div>🔴 العنوان الحالي (جديد): {{currentIP}}</div>
+                <div>🟢 آخر عنوان معروف: {{lastKnownIP}}</div>
+            </div>
+            
+            <div class="security-footer">
+                <div><strong>معلومات الجهاز:</strong></div>
+                <div>المتصفح: {{browser}} - {{os}}</div>
+                <div>الوقت: {{timestamp}}</div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><strong>ركني © 2025</strong></p>
+            <p><a href="mailto:support@rukny.io">support@rukny.io</a></p>
+        </div>
+    </div>
+</body>
+</html>

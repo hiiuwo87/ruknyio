@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مرحباً بك في Rukny</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Cairo', sans-serif;
+            background-color: #f8f9fa;
+            direction: rtl;
+            line-height: 1.6;
+        }
+        .wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .container {
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .header {
+            background: linear-gradient(135deg, #333446 0%, #424560 100%);
+            padding: 48px 32px;
+            text-align: center;
+        }
+        .logo {
+            font-size: 32px;
+            color: #ffffff;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .tagline {
+            color: rgba(255,255,255,0.9);
+            font-size: 15px;
+        }
+        .content {
+            padding: 48px 32px;
+        }
+        .title {
+            font-size: 24px;
+            color: #1a1a1a;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+        .description {
+            font-size: 16px;
+            color: #666666;
+            margin-bottom: 32px;
+            line-height: 1.7;
+        }
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #333446 0%, #424560 100%);
+            color: #ffffff !important;
+            text-decoration: none;
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+        }
+        .button-wrapper {
+            text-align: center;
+            margin: 40px 0;
+        }
+        .info-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 32px 0;
+            border-right: 4px solid #333446;
+        }
+        .info-box p {
+            font-size: 14px;
+            color: #666666;
+            margin: 0;
+        }
+        .info-box strong {
+            color: #333446;
+        }
+        .footer {
+            background: #f8f9fa;
+            padding: 32px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+        .footer-text {
+            font-size: 13px;
+            color: #999999;
+            margin: 8px 0;
+        }
+        .footer-link {
+            color: #333446;
+            text-decoration: none;
+        }
+        .security {
+            font-size: 12px;
+            color: #adb5bd;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="container">
+            <!-- Header -->
+            <div class="header">
+                <div class="logo">ركني</div>
+                <div class="tagline">منصتك المتكاملة للفعاليات والمتاجر</div>
+            </div>
+            
+            <!-- Content -->
+            <div class="content">
+                <h1 class="title">مرحباً بك! 👋</h1>
+                <p class="description">
+                    يسعدنا انضمامك إلى ركني. لإكمال التسجيل والبدء في استخدام المنصة، انقر على الزر أدناه.
+                </p>
+                
+                <!-- CTA Button -->
+                <div class="button-wrapper">
+                    <a href="{{quickSignLink}}" class="button">
+                        إكمال التسجيل
+                    </a>
+                </div>
+                
+                
+                <p class="description" style="margin-top: 32px; font-size: 14px;">
+                    إذا لم تطلب هذا البريد، يمكنك تجاهله بأمان.
+                </p>
+                
+                <!-- Security Info -->
+                <div class="security">
+                    <p>تم الإرسال إلى: {{email}}</p>
+                    <p>{{ipAddress}} • {{browser}} • {{os}}</p>
+                    <p>{{timestamp}}</p>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="footer">
+                <p class="footer-text"><strong>ركني</strong> © 2025</p>
+                <p class="footer-text">
+                    <a href="mailto:support@rukny.io" class="footer-link">الدعم الفني</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
