@@ -537,21 +537,8 @@ export function CreateFormWizard({ initialDraft, initialSlug }: CreateFormWizard
     return true;
   }, [currentStep, title, slug, isMultiStep, formSteps, fields, getTotalFieldsCount]);
 
-  // Navigation
-  const handleContinue = useCallback(() => {
-    if (validateStep()) {
-      setCurrentStep(prev => Math.min(prev + 1, TOTAL_STEPS));
-    }
-  }, [validateStep]);
-
-  const handleBack = useCallback(() => {
-    setCurrentStep(prev => Math.max(prev - 1, 1));
-  }, []);
-
-  // Submit form
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  // Submit form logic (extracted so it can be called from handleContinue on last step)
+  const submitForm = useCallback(async () => {
     if (currentStep !== TOTAL_STEPS) return;
     
     setIsSubmitting(true);
@@ -676,6 +663,28 @@ export function CreateFormWizard({ initialDraft, initialSlug }: CreateFormWizard
     }
   }, [currentStep, banners, title, slug, description, formType, status, isMultiStep, allowMultipleSubmissions, requiresAuthentication, showProgressBar, showQuestionNumbers, notifyOnSubmission, notificationEmail, formTheme, bannerDisplayMode, formSteps, fields, enableGoogleSheets, storageOption, createForm, connectGoogleSheets, router]);
 
+  // Navigation
+  const handleContinue = useCallback(() => {
+    if (validateStep()) {
+      if (currentStep === TOTAL_STEPS) {
+        // On last step, submit the form
+        submitForm();
+      } else {
+        setCurrentStep(prev => Math.min(prev + 1, TOTAL_STEPS));
+      }
+    }
+  }, [validateStep, currentStep, submitForm]);
+
+  const handleBack = useCallback(() => {
+    setCurrentStep(prev => Math.max(prev - 1, 1));
+  }, []);
+
+  // Form onSubmit handler (also triggers submitForm)
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
+    await submitForm();
+  }, [submitForm]);
+
   const editingField = editingFieldId ? fields.find(f => f.id === editingFieldId) : null;
 
   // ============================================
@@ -720,7 +729,7 @@ export function CreateFormWizard({ initialDraft, initialSlug }: CreateFormWizard
       <WizardStepHeader step={2} totalSteps={TOTAL_STEPS} title="معلومات النموذج" description="أدخل المعلومات الأساسية" />
 
       {/* Form Fields */}
-      <div className="w-full max-w-md space-y-4 px-1">
+      <div className="w-full max-w-md space-y-4 ">
         {/* Title Input */}
         <div>
           <label htmlFor="title" className="text-sm font-medium text-foreground mb-2 block">

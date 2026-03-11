@@ -62,18 +62,16 @@ const iconMap: Record<string, React.ElementType> = {
 // Color Map
 // ============================================
 
-const colorMap: Record<string, { bg: string; text: string; selectedBg: string }> = {
-  'blue':    { bg: 'bg-blue-50',    text: 'text-blue-600',    selectedBg: 'bg-blue-600' },
-  'orange':  { bg: 'bg-orange-50',  text: 'text-orange-600',  selectedBg: 'bg-orange-600' },
-  'purple':  { bg: 'bg-purple-50',  text: 'text-purple-600',  selectedBg: 'bg-purple-600' },
-  'amber':   { bg: 'bg-amber-50',   text: 'text-amber-600',   selectedBg: 'bg-amber-600' },
-  'emerald': { bg: 'bg-emerald-50', text: 'text-emerald-600', selectedBg: 'bg-emerald-600' },
-  'teal':    { bg: 'bg-teal-50',    text: 'text-teal-600',    selectedBg: 'bg-teal-600' },
-  'indigo':  { bg: 'bg-indigo-50',  text: 'text-indigo-600',  selectedBg: 'bg-indigo-600' },
-  'rose':    { bg: 'bg-rose-50',    text: 'text-rose-600',    selectedBg: 'bg-rose-600' },
+const colorMap: Record<string, string> = {
+  'blue':    'text-blue-500',
+  'orange':  'text-orange-500',
+  'purple':  'text-purple-500',
+  'amber':   'text-amber-500',
+  'emerald': 'text-emerald-500',
+  'teal':    'text-teal-500',
+  'indigo':  'text-indigo-500',
+  'rose':    'text-rose-500',
 };
-
-const defaultColor = { bg: 'bg-muted', text: 'text-muted-foreground', selectedBg: 'bg-foreground' };
 
 // ============================================
 // Component
@@ -109,109 +107,105 @@ export function FormTemplateSelector({
     : FORM_TEMPLATES.filter(t => t.category === activeCategory);
 
   return (
-    <div className="space-y-4 px-1">
+    <div className="space-y-5">
       {/* Header */}
-      <div className="text-center space-y-1.5">
-        <h2 className="text-lg sm:text-xl font-bold text-foreground">اختر قالباً</h2>
-        <p className="text-muted-foreground text-xs sm:text-sm">
+      <div className="text-center space-y-1">
+        <h2 className="text-lg font-semibold text-foreground">اختر قالباً</h2>
+        <p className="text-muted-foreground text-xs">
           ابدأ بقالب جاهز أو أنشئ من الصفر
         </p>
-        
+      </div>
+
+      {/* Language + Category Row */}
+      <div className="flex items-center justify-between gap-3">
+        {/* Category Filter */}
+        <div className="flex items-center gap-1 overflow-x-auto flex-1" style={{ scrollbarWidth: 'none' }}>
+          <button
+            type="button"
+            onClick={() => setActiveCategory('all')}
+            className={cn(
+              "flex-shrink-0 px-2.5 py-1 rounded-full text-[11px] font-medium",
+              activeCategory === 'all'
+                ? "bg-foreground text-background"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            {selectedLanguage === 'ar' ? 'الكل' : 'All'}
+          </button>
+          {(Object.entries(TEMPLATE_CATEGORIES) as [TemplateCategory, { ar: string; en: string }][]).map(([key, value]) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setActiveCategory(key)}
+              className={cn(
+                "flex-shrink-0 px-2.5 py-1 rounded-full text-[11px] font-medium",
+                activeCategory === key
+                  ? "bg-foreground text-background"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {value[selectedLanguage]}
+            </button>
+          ))}
+        </div>
+
         {/* Language Switcher */}
-        <div className="flex items-center justify-center gap-2 pt-1">
-          <Globe className="w-3.5 h-3.5 text-muted-foreground" />
-          <div className="flex rounded-lg bg-muted p-0.5">
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          <Globe className="w-3 h-3 text-muted-foreground" />
+          <div className="flex rounded-full bg-muted p-0.5">
             <button
               type="button"
               onClick={() => handleLanguageChange('ar')}
               className={cn(
-                "px-2.5 py-1 rounded-md text-[11px] sm:text-xs font-medium transition-colors",
+                "px-2 py-0.5 rounded-full text-[10px] font-medium",
                 selectedLanguage === 'ar' 
                   ? "bg-foreground text-background" 
-                  : "text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground"
               )}
             >
-              عربي
+              ع
             </button>
             <button
               type="button"
               onClick={() => handleLanguageChange('en')}
               className={cn(
-                "px-2.5 py-1 rounded-md text-[11px] sm:text-xs font-medium transition-colors",
+                "px-2 py-0.5 rounded-full text-[10px] font-medium",
                 selectedLanguage === 'en' 
                   ? "bg-foreground text-background" 
-                  : "text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground"
               )}
             >
-              English
+              En
             </button>
           </div>
         </div>
       </div>
 
-      {/* Category Filter */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
-        <button
-          type="button"
-          onClick={() => setActiveCategory('all')}
-          className={cn(
-            "flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
-            activeCategory === 'all'
-              ? "bg-foreground text-background"
-              : "bg-muted text-muted-foreground hover:text-foreground"
-          )}
-        >
-          {selectedLanguage === 'ar' ? 'الكل' : 'All'}
-        </button>
-        {(Object.entries(TEMPLATE_CATEGORIES) as [TemplateCategory, { ar: string; en: string }][]).map(([key, value]) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => setActiveCategory(key)}
-            className={cn(
-              "flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
-              activeCategory === key
-                ? "bg-foreground text-background"
-                : "bg-muted text-muted-foreground hover:text-foreground"
-            )}
-          >
-            {value[selectedLanguage]}
-          </button>
-        ))}
-      </div>
-
       {/* Templates Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {/* Start from Scratch */}
         <button
           type="button"
           onClick={onStartFromScratch}
           className={cn(
-            "relative rounded-xl border-2 border-dashed p-3 transition-colors flex flex-col justify-center items-center gap-2 min-h-[120px]",
+            "relative rounded-xl border-2 border-dashed p-3 flex flex-col justify-center items-center gap-1.5 min-h-[100px]",
             selectedTemplateId === null 
-              ? "border-foreground bg-muted/40" 
-              : "border-border hover:border-muted-foreground/40"
+              ? "border-foreground/50 bg-muted/30" 
+              : "border-border/60 hover:border-muted-foreground/30"
           )}
         >
           <div className={cn(
-            "w-9 h-9 rounded-lg flex items-center justify-center transition-colors",
+            "w-8 h-8 rounded-full flex items-center justify-center",
             selectedTemplateId === null 
               ? "bg-foreground text-background" 
               : "bg-muted text-muted-foreground"
           )}>
-            <Plus className="w-4 h-4" />
+            <Plus className="w-3.5 h-3.5" />
           </div>
-          <div className="text-center">
-            <h3 className="font-medium text-foreground text-xs sm:text-sm">
-              من الصفر
-            </h3>
-            <p className="text-[10px] text-muted-foreground">
-              نموذج فارغ
-            </p>
-          </div>
+          <span className="font-medium text-foreground text-xs">من الصفر</span>
           {selectedTemplateId === null && (
-            <div className="absolute top-2 left-2">
-              <Check className="w-4 h-4 text-foreground" />
+            <div className="absolute top-1.5 left-1.5 w-4 h-4 rounded-full bg-foreground flex items-center justify-center">
+              <Check className="w-2.5 h-2.5 text-background" />
             </div>
           )}
         </button>
@@ -220,7 +214,7 @@ export function FormTemplateSelector({
         {filteredTemplates.map((template) => {
           const isSelected = selectedTemplateId === template.id;
           const IconComponent = iconMap[template.icon] || FileText;
-          const color = colorMap[template.color] || defaultColor;
+          const iconColor = colorMap[template.color] || 'text-muted-foreground';
           
           return (
             <button
@@ -228,68 +222,40 @@ export function FormTemplateSelector({
               type="button"
               onClick={() => handleSelectTemplate(template)}
               className={cn(
-                "relative rounded-xl border p-3 transition-colors text-right min-h-[120px] flex flex-col",
+                "relative rounded-xl border p-3 text-right min-h-[100px] flex flex-col gap-1.5",
                 isSelected 
-                  ? "border-foreground bg-muted/40" 
-                  : "border-border hover:border-muted-foreground/40"
+                  ? "border-foreground/50 bg-muted/30" 
+                  : "border-border/60 hover:border-muted-foreground/30"
               )}
             >
-              {/* Icon & Badge */}
-              <div className="flex items-start justify-between mb-2">
-                <div className={cn(
-                  "w-8 h-8 rounded-lg flex items-center justify-center transition-colors",
-                  isSelected ? `${color.selectedBg} text-white` : `${color.bg} ${color.text}`
-                )}>
-                  <IconComponent className="w-4 h-4" />
-                </div>
-                
-                <div className="flex items-center gap-1">
-                  <span className="px-1.5 py-0.5 rounded text-[9px] font-medium bg-muted text-muted-foreground">
-                    {template.fields.length} حقل
-                  </span>
-                  {isSelected && (
-                    <Check className="w-4 h-4 text-foreground" />
-                  )}
-                </div>
+              {/* Icon */}
+              <div className="flex items-center justify-between">
+                <IconComponent className={cn("w-4.5 h-4.5", isSelected ? iconColor : 'text-muted-foreground')} />
+                {isSelected && (
+                  <div className="w-4 h-4 rounded-full bg-foreground flex items-center justify-center">
+                    <Check className="w-2.5 h-2.5 text-background" />
+                  </div>
+                )}
               </div>
 
               {/* Content */}
-              <div className="flex-1">
-                <h3 className="font-medium text-foreground text-xs sm:text-sm line-clamp-1 mb-0.5">
+              <div className="flex-1 mt-1">
+                <h3 className="font-medium text-foreground text-[11px] sm:text-xs line-clamp-1">
                   {template.name[selectedLanguage]}
                 </h3>
-                <p className="text-[10px] text-muted-foreground line-clamp-2 leading-relaxed">
+                <p className="text-[10px] text-muted-foreground line-clamp-2 mt-0.5 leading-relaxed">
                   {template.description[selectedLanguage]}
                 </p>
               </div>
+
+              {/* Field count */}
+              <span className="text-[9px] text-muted-foreground/70">
+                {template.fields.length} {selectedLanguage === 'ar' ? 'حقل' : 'fields'}
+              </span>
             </button>
           );
         })}
       </div>
-
-      {/* Selected Template Info */}
-      {selectedTemplateId && (() => {
-        const template = FORM_TEMPLATES.find(t => t.id === selectedTemplateId);
-        if (!template) return null;
-        const IconComponent = iconMap[template.icon] || FileText;
-        const color = colorMap[template.color] || defaultColor;
-        return (
-          <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-muted/40 border border-border">
-            <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0", color.selectedBg)}>
-              <IconComponent className="w-4 h-4 text-white" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-medium text-foreground text-xs sm:text-sm">
-                {template.name[selectedLanguage]}
-              </p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
-                {template.fields.length} حقول جاهزة للاستخدام
-              </p>
-            </div>
-            <Check className="w-4 h-4 text-green-500 flex-shrink-0" />
-          </div>
-        );
-      })()}
     </div>
   );
 }

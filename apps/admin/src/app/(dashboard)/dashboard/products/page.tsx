@@ -5,7 +5,7 @@
  * Main products management page with stats, filters, and table
  */
 
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/api/client";
 import { Tag, RefreshCw, Download } from "lucide-react";
 import { motion } from "framer-motion";
@@ -120,6 +120,7 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [hasLoadedInitialData, setHasLoadedInitialData] = useState(false);
 
   // Filters
   const [search, setSearch] = useState("");
@@ -175,6 +176,7 @@ export default function ProductsPage() {
         if (isRefresh) setRefreshing(true);
         else setLoading(true);
         await Promise.allSettled([fetchStats(), fetchProducts()]);
+        setHasLoadedInitialData(true);
       } finally {
         setLoading(false);
         setRefreshing(false);
@@ -184,16 +186,17 @@ export default function ProductsPage() {
   );
 
   useEffect(() => {
-    fetchAll();
-  }, [fetchAll]);
+    void fetchAll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Refetch products when filters/page change
   useEffect(() => {
-    if (!loading) {
-      fetchProducts();
+    if (hasLoadedInitialData) {
+      void fetchProducts();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, debouncedSearch, status, featured, startDate, endDate]);
+  }, [page, debouncedSearch, status, featured, startDate, endDate, hasLoadedInitialData]);
 
   const handleStatusChange = async (id: string, newStatus: string) => {
     try {

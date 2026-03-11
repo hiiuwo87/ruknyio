@@ -35,6 +35,9 @@ import { LinksModule } from './domain/links/links.module';
 // Domain - Todos (Task Management) - DISABLED
 // import { TodosModule } from './domain/todos/todos.module';
 
+// Domain - Admin
+import { AdminModule } from './domain/admin/admin.module';
+
 // Domain - Stores & Products
 import { StoresModule } from './domain/stores/stores.module';
 
@@ -108,6 +111,9 @@ import { SharedModule } from './shared/modules/shared.module';
 
     // Domain - Stores & Products
     StoresModule,
+
+    // Domain - Admin
+    AdminModule,
 
     // Domain - Storage (S3)
     StorageModule,
