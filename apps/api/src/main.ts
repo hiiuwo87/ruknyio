@@ -280,4 +280,7 @@ async function bootstrap() {
   console.log(`\n📚 Swagger documentation: http://localhost:${port}/api/docs`);
   console.log(`🔗 API endpoint: http://localhost:${port}/api\n`);
 }
-bootstrap();
+bootstrap().catch((err) => {
+  console.error('❌ Failed to start application:', err);
+  process.exit(1);
+});
