@@ -58,6 +58,7 @@ services:
       PORT: 3001
       HOST: 0.0.0.0
       DATABASE_URL: postgresql://${DB_USER:-rukny_admin}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-rukny_io}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD: ${REDIS_PASSWORD}
