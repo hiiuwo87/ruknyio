@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { writeFile, unlink, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join } from 'path';
+import { tmpdir } from 'os';
 import { v4 as uuidv4 } from 'uuid';
 import { fileTypeFromBuffer } from 'file-type';
 import { spawn } from 'child_process';
@@ -16,7 +17,7 @@ import { spawn } from 'child_process';
 const DEFAULT_MAX_VIDEO_SIZE_MB = 50;
 const DEFAULT_MAX_VIDEO_DURATION_SECONDS = 30;
 const DEFAULT_VIDEO_QUALITY = 23; // CRF value (lower = better quality)
-const TEMP_DIR = join(process.cwd(), 'temp', 'videos');
+const TEMP_DIR = join(tmpdir(), 'rukny-videos');
 
 // ===== Interfaces =====
 export interface VideoProcessingOptions {
@@ -123,8 +124,12 @@ export class VideoProcessorService implements OnModuleInit {
 
   async onModuleInit(): Promise<void> {
     // Ensure temp directory exists
-    if (!existsSync(TEMP_DIR)) {
-      await mkdir(TEMP_DIR, { recursive: true });
+    try {
+      if (!existsSync(TEMP_DIR)) {
+        await mkdir(TEMP_DIR, { recursive: true });
+      }
+    } catch (err) {
+      this.logger.warn(`Could not create temp dir ${TEMP_DIR}: ${err.message}`);
     }
 
     // Check if FFmpeg is available
