@@ -411,7 +411,6 @@ function CompleteProfileContent() {
           username: formData.username.trim(),
           isVendor: true,
           storeCategory: storeData.category || undefined,
-          storeCategoryId: storeData.categoryId || undefined,
           storeDescription: storeData.storeDescription.trim() || undefined,
           employeesCount: storeData.employeesCount || undefined,
           // Location fields - only send if location was selected

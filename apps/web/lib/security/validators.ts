@@ -176,7 +176,7 @@ export const CompleteProfileSchema = z.object({
   username: UsernameSchema,
   isVendor: z.boolean().optional(),
   storeCategory: z.string().optional(),
-  storeCategoryId: z.string().optional(),
+
   storeDescription: z.string().optional(),
   employeesCount: z.string().optional(),
   storeCountry: z.string().optional(),

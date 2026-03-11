@@ -67,6 +67,7 @@ services:
       TWO_FACTOR_ENCRYPTION_KEY: ${TWO_FACTOR_ENCRYPTION_KEY}
       INTERNAL_API_SECRET: ${INTERNAL_API_SECRET}
       FRONTEND_URL: ${FRONTEND_URL:-https://rukny.io}
+      AUTH_BASE_URL: ${AUTH_BASE_URL:-https://api.rukny.io}
       COOKIE_DOMAIN: ${COOKIE_DOMAIN:-rukny.io}
       COOKIE_SECURE: "true"
       # OAuth
