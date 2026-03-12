@@ -19,14 +19,18 @@ import { getAppUrl, getAuthUrl, getPublicUrl, getLoginUrl } from '@/lib/url';
 
 const EnvSchema = z.object({
   NEXT_PUBLIC_API_URL: z.string().optional(),
+  NEXT_PUBLIC_API_EXTERNAL_URL: z.string().optional(),
   NEXT_PUBLIC_APP_URL: z.string().optional(),
+  NEXT_PUBLIC_ROOT_DOMAIN: z.string().optional(),
   NODE_ENV: z.enum(['development', 'production', 'test']).optional(),
 });
 
 // Validate environment variables
 const env = EnvSchema.parse({
   NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+  NEXT_PUBLIC_API_EXTERNAL_URL: process.env.NEXT_PUBLIC_API_EXTERNAL_URL,
   NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+  NEXT_PUBLIC_ROOT_DOMAIN: process.env.NEXT_PUBLIC_ROOT_DOMAIN,
   NODE_ENV: process.env.NODE_ENV,
 });
 
@@ -51,6 +55,8 @@ export const APP_URL = env.NEXT_PUBLIC_APP_URL || runtimeAppUrl || 'http://local
  */
 export const API_EXTERNAL_URL = env.NEXT_PUBLIC_API_URL?.startsWith('http') 
   ? env.NEXT_PUBLIC_API_URL 
+  : env.NEXT_PUBLIC_API_EXTERNAL_URL
+    ? env.NEXT_PUBLIC_API_EXTERNAL_URL
   : `${APP_URL}/api/v1`;
 
 /**

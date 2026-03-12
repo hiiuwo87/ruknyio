@@ -222,7 +222,7 @@ export class QuickSignController {
   ) {
     const userAgent = req.headers['user-agent'];
     const ipAddress = req.ip || req.socket.remoteAddress;
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const frontendUrl = process.env.AUTH_FRONTEND_URL || process.env.FRONTEND_URL || 'http://localhost:3000';
 
     // 🔒 Debug: Log incoming token
     if (!isProduction) {

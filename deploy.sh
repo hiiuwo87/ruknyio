@@ -22,10 +22,10 @@ export $(grep -v '^#' .env.production | xargs)
 
 # ─── Build and start containers ───
 echo "📦 Building Docker images..."
-docker compose -f docker-compose.production.yml build
+docker compose -f docker-compose.yml build
 
 echo "🔄 Starting services..."
-docker compose -f docker-compose.production.yml up -d
+docker compose -f docker-compose.yml up -d
 
 echo "⏳ Waiting for services to be ready..."
 sleep 10
@@ -33,12 +33,14 @@ sleep 10
 # ─── Check status ───
 echo ""
 echo "📊 Service Status:"
-docker compose -f docker-compose.production.yml ps
+docker compose -f docker-compose.yml ps
 
 echo ""
 echo "✅ Deployment complete!"
 echo ""
 echo "🔗 Services:"
-echo "   Web:   https://rukny.io"
-echo "   API:   https://api.rukny.io"
-echo "   Admin: https://admin.rukny.io"
+echo "   Web:   https://rukny.xyz"
+echo "   Auth:  https://accounts.rukny.xyz"
+echo "   App:   https://app.rukny.xyz"
+echo "   API:   https://api.rukny.xyz"
+echo "   Admin: https://admin.rukny.xyz"

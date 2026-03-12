@@ -396,7 +396,7 @@ export class AuthController {
     const base =
       process.env.NODE_ENV === 'development' && process.env.FRONTEND_URL_DEV
         ? process.env.FRONTEND_URL_DEV
-        : process.env.FRONTEND_URL || 'http://localhost:3000';
+        : process.env.AUTH_FRONTEND_URL || process.env.FRONTEND_URL || 'http://localhost:3000';
     const redirectUrl = `${base}/auth/callback?code=${code}`;
     res.redirect(redirectUrl);
   }
@@ -511,7 +511,7 @@ export class AuthController {
     const base =
       process.env.NODE_ENV === 'development' && process.env.FRONTEND_URL_DEV
         ? process.env.FRONTEND_URL_DEV
-        : process.env.FRONTEND_URL || 'http://localhost:3000';
+        : process.env.AUTH_FRONTEND_URL || process.env.FRONTEND_URL || 'http://localhost:3000';
     const redirectUrl = `${base}/auth/callback?code=${code}`;
     res.redirect(redirectUrl);
   }

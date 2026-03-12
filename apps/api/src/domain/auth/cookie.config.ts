@@ -35,6 +35,8 @@ const cookieDomain = process.env.COOKIE_DOMAIN || undefined;
 const ALLOWED_ORIGINS: string[] = [
   process.env.FRONTEND_URL || 'http://localhost:3000',
   process.env.FRONTEND_URL_ALT, // e.g. https://www.rukny.xyz if FRONTEND_URL is https://rukny.xyz
+  process.env.APP_FRONTEND_URL,
+  process.env.AUTH_FRONTEND_URL,
   'http://localhost:3000',
   'http://127.0.0.1:3000',
   // Local network IPs are handled dynamically in validateCsrfOrigin()

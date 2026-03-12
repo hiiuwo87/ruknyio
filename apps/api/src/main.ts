@@ -146,12 +146,19 @@ async function bootstrap() {
     // Production domains
     'https://rukny.io',
     'https://www.rukny.io',
+    'https://app.rukny.io',
+    'https://accounts.rukny.io',
     'https://rukny.store',
     'https://www.rukny.store',
     'https://rukny.xyz',
     'https://www.rukny.xyz',
+    'https://app.rukny.xyz',
+    'https://accounts.rukny.xyz',
     // Environment variable override
     process.env.FRONTEND_URL,
+    process.env.FRONTEND_URL_ALT,
+    process.env.APP_FRONTEND_URL,
+    process.env.AUTH_FRONTEND_URL,
   ].filter(Boolean); // Remove undefined values
 
   // In development, allow all local network IPs

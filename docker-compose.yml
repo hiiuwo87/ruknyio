@@ -68,14 +68,17 @@ services:
       JWT_EXPIRATION: ${JWT_EXPIRATION:-7d}
       TWO_FACTOR_ENCRYPTION_KEY: ${TWO_FACTOR_ENCRYPTION_KEY}
       INTERNAL_API_SECRET: ${INTERNAL_API_SECRET}
-      FRONTEND_URL: ${FRONTEND_URL:-https://rukny.io}
-      AUTH_BASE_URL: ${AUTH_BASE_URL:-https://api.rukny.io}
-      COOKIE_DOMAIN: ${COOKIE_DOMAIN:-rukny.io}
+      FRONTEND_URL: ${FRONTEND_URL:-https://rukny.xyz}
+      FRONTEND_URL_ALT: ${FRONTEND_URL_ALT:-https://www.rukny.xyz}
+      APP_FRONTEND_URL: ${APP_FRONTEND_URL:-https://app.rukny.xyz}
+      AUTH_FRONTEND_URL: ${AUTH_FRONTEND_URL:-https://accounts.rukny.xyz}
+      AUTH_BASE_URL: ${AUTH_BASE_URL:-https://api.rukny.xyz}
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN:-rukny.xyz}
       COOKIE_SECURE: "true"
       # OAuth
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-      GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL:-https://api.rukny.io/api/v1/auth/google/callback}
+      GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL:-https://api.rukny.xyz/api/v1/auth/google/callback}
       LINKEDIN_CLIENT_ID: ${LINKEDIN_CLIENT_ID}
       LINKEDIN_CLIENT_SECRET: ${LINKEDIN_CLIENT_SECRET}
       # Email
@@ -100,6 +103,9 @@ services:
       dockerfile: Dockerfile
       args:
         - API_BACKEND_URL=http://api:3001
+        - NEXT_PUBLIC_API_EXTERNAL_URL=${NEXT_PUBLIC_API_EXTERNAL_URL:-https://api.rukny.xyz/api/v1}
+        - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://rukny.xyz}
+        - NEXT_PUBLIC_ROOT_DOMAIN=${NEXT_PUBLIC_ROOT_DOMAIN:-rukny.xyz}
     container_name: rukny_web
     restart: always
     ports:
@@ -109,6 +115,9 @@ services:
     environment:
       API_BACKEND_URL: http://api:3001
       API_URL: http://api:3001
+      NEXT_PUBLIC_API_EXTERNAL_URL: ${NEXT_PUBLIC_API_EXTERNAL_URL:-https://api.rukny.xyz/api/v1}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://rukny.xyz}
+      NEXT_PUBLIC_ROOT_DOMAIN: ${NEXT_PUBLIC_ROOT_DOMAIN:-rukny.xyz}
     networks:
       - rukny_network
 
@@ -137,7 +146,7 @@ services:
     container_name: rukny_pgadmin
     restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@rukny.io}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@rukny.xyz}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
       PGADMIN_LISTEN_PORT: 5050
       PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION: "False"

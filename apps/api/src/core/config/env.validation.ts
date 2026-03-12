@@ -38,6 +38,9 @@ export const envSchema = z.object({
     .string()
     .url('FRONTEND_URL must be a valid URL')
     .default('http://localhost:3000'),
+  FRONTEND_URL_ALT: z.string().url('FRONTEND_URL_ALT must be a valid URL').optional(),
+  APP_FRONTEND_URL: z.string().url('APP_FRONTEND_URL must be a valid URL').optional(),
+  AUTH_FRONTEND_URL: z.string().url('AUTH_FRONTEND_URL must be a valid URL').optional(),
 
   // Cookies
   COOKIE_DOMAIN: z.string().optional(),

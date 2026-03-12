@@ -122,18 +122,19 @@ export function MobileDock() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 30 }}
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-              className="fixed bottom-[72px] inset-x-3 z-50 lg:hidden max-h-[70vh]"
+              className="fixed inset-x-3 z-50 max-h-[72vh] lg:hidden"
+              style={{ bottom: 'calc(80px + env(safe-area-inset-bottom))' }}
               dir="rtl"
             >
-              <div className="overflow-y-auto rounded-2xl border border-border/50 bg-background shadow-xl [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              <div className="overflow-y-auto rounded-3xl border border-border/60 bg-background/95 shadow-2xl shadow-black/10 ring-1 ring-black/5 backdrop-blur-xl [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
                 {/* Profile Header */}
                 <Link
                   href="/app/settings/profile"
                   onClick={closeMenu}
-                  className="flex items-center gap-3 p-4 transition-colors hover:bg-muted/30"
+                  className="flex items-center gap-3 p-4 transition-colors hover:bg-muted/40 active:bg-muted/60"
                 >
-                  <div className="relative size-10 shrink-0 overflow-hidden rounded-full bg-gradient-to-br from-primary to-primary/70 ring-2 ring-primary/20">
+                  <div className="relative size-11 shrink-0 overflow-hidden rounded-full bg-gradient-to-br from-primary to-primary/70 ring-2 ring-primary/20">
                     {showAvatar ? (
                       <img
                         src={user!.avatar!}
@@ -149,14 +150,14 @@ export function MobileDock() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <span className="truncate text-[13px] font-semibold text-foreground">
+                      <span className="truncate text-sm font-semibold text-foreground">
                         {user?.name || 'المستخدم'}
                       </span>
                       {user?.emailVerified && (
                         <BadgeCheck className="size-3.5 shrink-0 text-primary fill-primary/20" />
                       )}
                     </div>
-                    <p className="truncate text-[11px] text-muted-foreground">
+                    <p className="truncate text-xs text-muted-foreground">
                       {user?.email || ''}
                     </p>
                   </div>
@@ -166,8 +167,8 @@ export function MobileDock() {
 
                 {/* Action Sections */}
                 {actionSections.map((section, si) => (
-                  <div key={section.title} className="py-2">
-                    <p className="px-5 mb-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50">
+                  <div key={section.title} className="py-2.5">
+                    <p className="mb-1.5 px-5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">
                       {section.title}
                     </p>
                     {section.items.map((action, i) => (
@@ -180,12 +181,12 @@ export function MobileDock() {
                         <Link
                           href={action.href}
                           onClick={closeMenu}
-                          className="flex items-center gap-3 px-4 py-2.5 text-foreground/80 transition-colors hover:bg-muted/40 active:bg-muted/60"
+                          className="flex min-h-11 items-center gap-3 px-4 py-2.5 text-foreground/80 transition-colors hover:bg-muted/40 active:bg-muted/70"
                         >
-                          <span className={cn('flex size-8 shrink-0 items-center justify-center rounded-lg text-white', action.color)}>
+                          <span className={cn('flex size-9 shrink-0 items-center justify-center rounded-xl text-white shadow-sm', action.color)}>
                             <action.icon className="size-4" />
                           </span>
-                          <span className="text-[13px] font-medium">{action.label}</span>
+                          <span className="text-sm font-medium">{action.label}</span>
                         </Link>
                       </motion.div>
                     ))}
@@ -201,12 +202,12 @@ export function MobileDock() {
                 <Link
                   href="/app/settings"
                   onClick={closeMenu}
-                  className="flex items-center gap-3 px-4 py-3 text-foreground/70 transition-colors hover:bg-muted/40 active:bg-muted/60"
+                  className="sticky bottom-0 flex items-center gap-3 bg-background/95 px-4 py-3 text-foreground/70 backdrop-blur transition-colors hover:bg-muted/40 active:bg-muted/60"
                 >
                   <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
                     <Settings className="size-4" />
                   </span>
-                  <span className="text-[13px] font-medium">الإعدادات</span>
+                  <span className="text-sm font-medium">الإعدادات</span>
                 </Link>
               </div>
             </motion.div>
@@ -215,21 +216,24 @@ export function MobileDock() {
       </AnimatePresence>
 
       {/* Dock */}
-      <div className="fixed bottom-3 left-0 right-0 z-50 flex justify-center lg:hidden">
+      <div
+        className="fixed left-0 right-0 z-50 flex justify-center lg:hidden"
+        style={{ bottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
+      >
         <Dock
           direction="middle"
-          magnification={44}
-          distance={80}
-          className="mx-auto mt-0 h-[52px] gap-1.5 rounded-2xl border-border/50 bg-background/80 px-2.5 shadow-lg shadow-black/5 backdrop-blur-xl"
+          magnification={52}
+          distance={92}
+          className="mx-auto mt-0 h-[60px] gap-1.5 rounded-2xl border-border/60 bg-background/85 px-2.5 shadow-xl shadow-black/10 backdrop-blur-xl"
         >
           {navItems.map((item) => {
             const active = isActive(item.href);
             return (
-              <DockIcon key={item.href} size={36} className={cn(
+              <DockIcon key={item.href} size={42} className={cn(
                 'transition-colors',
                 active
-                  ? 'bg-primary/10'
-                  : 'hover:bg-muted/50'
+                  ? 'bg-primary/12 ring-1 ring-primary/20'
+                  : 'hover:bg-muted/60'
               )}>
                 <Link
                   href={item.href}
@@ -238,7 +242,7 @@ export function MobileDock() {
                 >
                   <item.icon
                     className={cn(
-                      'size-[18px]',
+                      'size-5',
                       active ? 'text-primary' : 'text-muted-foreground',
                     )}
                     strokeWidth={active ? 2.2 : 1.8}
@@ -249,7 +253,7 @@ export function MobileDock() {
           })}
 
           {/* + Button */}
-          <DockIcon size={36} className="bg-primary hover:bg-primary/90 transition-colors">
+          <DockIcon size={42} className="bg-primary shadow-sm hover:bg-primary/90 transition-colors">
             <button
               type="button"
               onClick={toggleMenu}
@@ -260,7 +264,7 @@ export function MobileDock() {
                 animate={{ rotate: isOpen ? 45 : 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <Plus className="size-5 text-primary-foreground" strokeWidth={2.5} />
+                <Plus className="size-[22px] text-primary-foreground" strokeWidth={2.5} />
               </motion.div>
             </button>
           </DockIcon>

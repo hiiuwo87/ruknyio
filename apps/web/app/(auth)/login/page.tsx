@@ -10,6 +10,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/providers';
 import { getGoogleAuthUrl, getLinkedInAuthUrl } from '@/lib/api';
 import { resetRefreshState } from '@/lib/api/client';
+import { getAppUrl } from '@/lib/url';
 import AuthForm from '@/components/ui/auth-form';
 
 function LoginContent() {
@@ -24,7 +25,13 @@ function LoginContent() {
   // ⚠️ Do NOT redirect when rate limited - auth state is unknown
   useEffect(() => {
     if (!authLoading && isAuthenticated && !isRateLimited) {
-      router.replace('/app');
+      const appUrl = getAppUrl('/');
+      if (appUrl.startsWith('http')) {
+        window.location.href = appUrl;
+        return;
+      }
+
+      router.replace(appUrl);
     }
   }, [authLoading, isAuthenticated, isRateLimited, router]);
 
@@ -67,7 +74,7 @@ function LoginContent() {
   const handleGoogleLogin = () => {
     // Store current URL for callback
     if (typeof window !== 'undefined') {
-      sessionStorage.setItem('oauth_callback', '/app');
+      sessionStorage.setItem('oauth_callback', getAppUrl('/'));
     }
     window.location.href = getGoogleAuthUrl();
   };
@@ -75,7 +82,7 @@ function LoginContent() {
   const handleLinkedInLogin = () => {
     // Store current URL for callback
     if (typeof window !== 'undefined') {
-      sessionStorage.setItem('oauth_callback', '/app');
+      sessionStorage.setItem('oauth_callback', getAppUrl('/'));
     }
     window.location.href = getLinkedInAuthUrl();
   };
