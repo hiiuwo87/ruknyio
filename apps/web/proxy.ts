@@ -275,6 +275,18 @@ export function proxy(request: NextRequest) {
     );
   }
 
+  // rukny.io homepage → redirect to app subdomain (avoids page.tsx redirect loop)
+  if (pathname === '/') {
+    if (userHasSession) {
+      return NextResponse.redirect(
+        new URL(buildAppRedirectUrl(subdomain, rootDomain, protocol)),
+      );
+    }
+    return NextResponse.redirect(
+      new URL(buildSubdomainUrl('accounts', '/login', search, rootDomain, protocol)),
+    );
+  }
+
   if (isAppPath(pathname)) {
     const cleanPath = pathname.replace(/^\/app/, '') || '/';
     return NextResponse.redirect(
