@@ -23,10 +23,10 @@ const cookieSecure = (process.env.COOKIE_SECURE === 'true') || isProduction;
 // domain: 'localhost' لا يعمل بشكل صحيح مع ports مختلفة في بعض المتصفحات
 // (Frontend على 3000، API على 3001)
 //
-// 🔒 في الإنتاج مع subdomains (مثل auth.rukny.xyz + rukny.xyz):
-//    اضبط COOKIE_DOMAIN=rukny.xyz (بدون نقطة في البداية)
+// 🔒 في الإنتاج مع subdomains (مثل accounts.rukny.io + rukny.io):
+//    اضبط COOKIE_DOMAIN=rukny.io (بدون نقطة في البداية)
 //    هذا يسمح لجميع الـ subdomains بمشاركة الكوكيز
-//    إذا تركته undefined، الكوكي سيكون host-only على auth.rukny.xyz فقط
+//    إذا تركته undefined، الكوكي سيكون host-only على accounts.rukny.io فقط
 const cookieDomain = process.env.COOKIE_DOMAIN || undefined;
 
 // 🔒 Origins المسموحة للـ CSRF validation
@@ -34,7 +34,7 @@ const cookieDomain = process.env.COOKIE_DOMAIN || undefined;
 // ⚠️ تأكد من إضافة جميع النطاقات المستخدمة (www و non-www)
 const ALLOWED_ORIGINS: string[] = [
   process.env.FRONTEND_URL || 'http://localhost:3000',
-  process.env.FRONTEND_URL_ALT, // e.g. https://www.rukny.xyz if FRONTEND_URL is https://rukny.xyz
+  process.env.FRONTEND_URL_ALT, // e.g. https://www.rukny.io if FRONTEND_URL is https://rukny.io
   process.env.APP_FRONTEND_URL,
   process.env.AUTH_FRONTEND_URL,
   'http://localhost:3000',

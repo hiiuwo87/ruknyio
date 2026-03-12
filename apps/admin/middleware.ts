@@ -28,8 +28,6 @@ export function middleware(request: NextRequest) {
       'https://www.rukny.io',
       'https://rukny.store',
       'https://www.rukny.store',
-      'https://rukny.xyz',
-      'https://www.rukny.xyz',
     ];
 
     const requestOrigin = request.headers.get('origin');

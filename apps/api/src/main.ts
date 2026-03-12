@@ -150,10 +150,6 @@ async function bootstrap() {
     'https://accounts.rukny.io',
     'https://rukny.store',
     'https://www.rukny.store',
-    'https://rukny.xyz',
-    'https://www.rukny.xyz',
-    'https://app.rukny.xyz',
-    'https://accounts.rukny.xyz',
     // Environment variable override
     process.env.FRONTEND_URL,
     process.env.FRONTEND_URL_ALT,

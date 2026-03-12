@@ -43,7 +43,7 @@ export function buildApiExternalUrl(path: string): string {
 const envAdmins = process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(",").map((e) => e.trim().toLowerCase()) ?? [];
 
 export const ADMIN_EMAILS: string[] = [
-  "support@rukny.xyz",
+  "support@rukny.io",
   ...envAdmins,
 ];
 

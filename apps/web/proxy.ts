@@ -6,9 +6,9 @@ import type { NextRequest } from 'next/server';
  *
  * Handles:
  * 1. Subdomain routing (production only)
- *    - app.rukny.xyz      → Dashboard (clean URLs, rewrite to /app/*)
- *    - accounts.rukny.xyz → Auth pages (/login, /complete-profile, etc.)
- *    - rukny.xyz          → Public pages (landing, /[username], /f/[slug])
+ *    - app.rukny.io       → Dashboard (clean URLs, rewrite to /app/*)
+ *    - accounts.rukny.io  → Auth pages (/login, /complete-profile, etc.)
+ *    - rukny.io           → Public pages (landing, /[username], /f/[slug])
  *
  * 2. Route protection (all environments)
  *    - Protected routes without session → redirect to login
@@ -50,7 +50,7 @@ function getSubdomain(hostname: string): string | null {
   try {
     const url = new URL(`http://${hostname}`);
     const host = url.hostname;
-    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'rukny.xyz';
+    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'rukny.io';
 
     if (host === rootDomain || host === `www.${rootDomain}`) {
       return null;
@@ -192,7 +192,7 @@ export function proxy(request: NextRequest) {
   }
 
   const subdomain = getSubdomain(hostname);
-  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'rukny.xyz';
+  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'rukny.io';
   const protocol =
     request.headers.get('x-forwarded-proto') ||
     (process.env.NODE_ENV === 'production' ? 'https' : 'http');

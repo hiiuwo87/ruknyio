@@ -28,7 +28,6 @@ import { CreateShortUrlDto } from './dto';
 const ALLOWED_REDIRECT_DOMAINS = [
   'rukny.io',
   'rukny.store',
-  'rukny.xyz',
   'rukny.work',
   'localhost',
   '127.0.0.1',

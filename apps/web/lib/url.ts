@@ -1,7 +1,7 @@
 /**
  * 🌐 URL Helper - Generates correct URLs based on environment
  * 
- * Production: Uses subdomains (app.rukny.xyz, accounts.rukny.xyz)
+ * Production: Uses subdomains (app.rukny.io, accounts.rukny.io)
  * Development: Uses path-based routing on localhost
  * 
  * Note: In production, app routes keep the /app prefix (app.rukny.io/app/settings)
@@ -11,14 +11,14 @@
  *   import { getAppUrl, getAuthUrl, getPublicUrl } from '@/lib/url';
  *   
  *   // Dashboard URLs
- *   getAppUrl('/settings')     → prod: "https://app.rukny.xyz/settings"    | dev: "/app/settings"
- *   getAppUrl('/')             → prod: "https://app.rukny.xyz"             | dev: "/app"
+ *   getAppUrl('/settings')     → prod: "https://app.rukny.io/settings"     | dev: "/app/settings"
+ *   getAppUrl('/')             → prod: "https://app.rukny.io"              | dev: "/app"
  *   
  *   // Auth URLs  
- *   getAuthUrl('/login')       → prod: "https://accounts.rukny.xyz/login"  | dev: "/login"
+ *   getAuthUrl('/login')       → prod: "https://accounts.rukny.io/login"   | dev: "/login"
  *   
  *   // Public URLs
- *   getPublicUrl('/ahmad')     → prod: "https://rukny.xyz/ahmad"           | dev: "/ahmad"
+ *   getPublicUrl('/ahmad')     → prod: "https://rukny.io/ahmad"            | dev: "/ahmad"
  */
 
 /**
@@ -51,7 +51,7 @@ function getDomainInfo(): { rootDomain: string; protocol: string } {
   }
   
   return {
-    rootDomain: process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'rukny.xyz',
+    rootDomain: process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'rukny.io',
     protocol: process.env.NODE_ENV === 'production' ? 'https' : 'http',
   };
 }
