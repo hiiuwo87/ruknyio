@@ -132,6 +132,7 @@ const navSections: NavSection[] = [
       { href: "/dashboard/events", label: "Events", icon: CalendarDays },
       { href: "/dashboard/pages", label: "Pages", icon: BookOpen },
       { href: "/dashboard/media", label: "Media Library", icon: Image },
+      { href: "/dashboard/wallpapers", label: "Form Wallpapers", icon: Image },
       { href: "/dashboard/uploads", label: "Uploads", icon: Upload },
     ],
   },

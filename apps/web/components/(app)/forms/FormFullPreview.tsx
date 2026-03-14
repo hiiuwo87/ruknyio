@@ -757,9 +757,10 @@ export function FormFullPreview({ data, onClose, formUrl }: FormFullPreviewProps
       case 'image':
         return theme.backgroundImage ? {
           backgroundImage: theme.backgroundBlur ? undefined : `url(${theme.backgroundImage})`,
-          backgroundSize: 'cover',
+          backgroundSize: theme.backgroundFit === 'contain' ? 'contain' : theme.backgroundFit === 'fill' ? '100% 100%' : 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
+          backgroundColor: theme.backgroundFit === 'contain' ? '#000' : undefined,
         } : {};
       case 'video':
         return {};
@@ -811,7 +812,14 @@ export function FormFullPreview({ data, onClose, formUrl }: FormFullPreviewProps
           loop
           muted
           playsInline
-          className="fixed inset-0 w-full h-full object-cover z-0"
+          className={cn(
+            "fixed inset-0 z-0",
+            theme.backgroundFit === 'contain'
+              ? "w-full h-full object-contain bg-black"
+              : theme.backgroundFit === 'fill'
+                ? "w-full h-full object-fill"
+                : "w-full h-full object-cover"
+          )}
           style={{
             filter: theme.backgroundBlur ? `blur(${theme.backgroundBlur}px)` : undefined,
             transform: theme.backgroundBlur ? 'scale(1.1)' : undefined,
@@ -824,8 +832,10 @@ export function FormFullPreview({ data, onClose, formUrl }: FormFullPreviewProps
           className="fixed inset-0 z-0"
           style={{
             backgroundImage: `url(${theme.backgroundImage})`,
-            backgroundSize: 'cover',
+            backgroundSize: theme.backgroundFit === 'contain' ? 'contain' : theme.backgroundFit === 'fill' ? '100% 100%' : 'cover',
             backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundColor: theme.backgroundFit === 'contain' ? '#000' : undefined,
             filter: `blur(${theme.backgroundBlur}px)`,
             transform: 'scale(1.1)',
           }}

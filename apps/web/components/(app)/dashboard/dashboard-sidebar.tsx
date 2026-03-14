@@ -135,16 +135,6 @@ export function Sidebar({ className }: SidebarProps) {
         { href: "/app/events/create", label: "إنشاء حدث" },
       ],
     },
-    {
-      href: "/app/tasks",
-      label: "المهام",
-      icon: ListTodo,
-      children: [
-        { href: "/app/tasks", label: "جميع المهام" },
-        { href: "/app/tasks/create", label: "إنشاء مهمة" },
-      ],
-    },
-    { href: "/app/analytics", label: "الإحصائيات", icon: BarChart3, isNew: true },
   ];
 
   /* ---- Bottom items --------------------------------------------- */

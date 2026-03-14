@@ -70,6 +70,7 @@ export interface FormTheme {
   backgroundGradient?: string;
   backgroundBlur?: number;
   backgroundOverlay?: number;
+  backgroundFit?: 'cover' | 'contain' | 'fill';
 
   // Submit Button
   submitButton?: SubmitButtonTheme;

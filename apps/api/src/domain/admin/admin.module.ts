@@ -10,6 +10,9 @@ import { ProductsService } from './products/products.service';
 import { OrdersController } from './orders/orders.controller';
 import { OrdersService } from './orders/orders.service';
 import { VerificationController } from './verification/verification.controller';
+import { WallpapersController } from './wallpapers/wallpapers.controller';
+import { PublicWallpapersController } from './wallpapers/public-wallpapers.controller';
+import { WallpapersService } from './wallpapers/wallpapers.service';
 
 @Module({
   controllers: [
@@ -19,6 +22,8 @@ import { VerificationController } from './verification/verification.controller';
     ProductsController,
     OrdersController,
     VerificationController,
+    WallpapersController,
+    PublicWallpapersController,
   ],
   providers: [
     DashboardService,
@@ -26,6 +31,7 @@ import { VerificationController } from './verification/verification.controller';
     StoresService,
     ProductsService,
     OrdersService,
+    WallpapersService,
   ],
 })
 export class AdminModule {}

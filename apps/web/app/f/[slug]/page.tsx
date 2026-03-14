@@ -79,6 +79,7 @@ interface FormTheme {
   backgroundGradient?: string;
   backgroundBlur?: number;
   backgroundOverlay?: number;
+  backgroundFit?: 'cover' | 'contain' | 'fill';
   // Submit Button
   submitButton?: {
     shape: 'square' | 'rounded' | 'pill';
@@ -569,7 +570,7 @@ export default function PublicFormPage() {
           <div className="space-y-1">
             {fieldLabel}
             <div className="relative">
-              <Calendar className={cn("absolute right-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 transition-colors", hasError ? "text-destructive/60" : "text-muted-foreground/50")} aria-hidden />
+              <Calendar className={cn("absolute right-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 transition-colors pointer-events-none z-[1]", hasError ? "text-destructive/60" : "text-muted-foreground/50")} aria-hidden />
               <input
                 id={fieldId}
                 type="date"
@@ -577,9 +578,8 @@ export default function PublicFormPage() {
                 onChange={(e) => handleFieldChange(field.id, e.target.value)}
                 min={(field as any).minDate || undefined}
                 max={(field as any).maxDate || undefined}
-                className={cn(inputClass, "pr-12")}
+                className={cn(inputClass, "pr-12 text-right form-date-input")}
                 style={inputStyle}
-                dir="ltr"
                 aria-invalid={hasError}
                 aria-required={field.required}
                 aria-describedby={ariaDescribedBy}
@@ -595,7 +595,7 @@ export default function PublicFormPage() {
           <div className="space-y-1">
             {fieldLabel}
             <div className="relative">
-              <Clock className={cn("absolute right-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 transition-colors", hasError ? "text-destructive/60" : "text-muted-foreground/50")} aria-hidden />
+              <Clock className={cn("absolute right-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 transition-colors pointer-events-none z-[1]", hasError ? "text-destructive/60" : "text-muted-foreground/50")} aria-hidden />
               <input
                 id={fieldId}
                 type="time"
@@ -603,9 +603,8 @@ export default function PublicFormPage() {
                 onChange={(e) => handleFieldChange(field.id, e.target.value)}
                 min={(field as any).minTime || undefined}
                 max={(field as any).maxTime || undefined}
-                className={cn(inputClass, "pr-12")}
+                className={cn(inputClass, "pr-12 text-right form-date-input")}
                 style={inputStyle}
-                dir="ltr"
                 aria-invalid={hasError}
                 aria-required={field.required}
                 aria-describedby={ariaDescribedBy}
@@ -619,18 +618,20 @@ export default function PublicFormPage() {
         return (
           <div className="space-y-1">
             {fieldLabel}
-            <input
-              id={fieldId}
-              type="datetime-local"
-              value={value || ''}
-              onChange={(e) => handleFieldChange(field.id, e.target.value)}
-              className={inputClass}
-              style={inputStyle}
-              dir="ltr"
-              aria-invalid={hasError}
-              aria-required={field.required}
-              aria-describedby={ariaDescribedBy}
-            />
+            <div className="relative">
+              <Calendar className={cn("absolute right-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 transition-colors pointer-events-none z-[1]", hasError ? "text-destructive/60" : "text-muted-foreground/50")} aria-hidden />
+              <input
+                id={fieldId}
+                type="datetime-local"
+                value={value || ''}
+                onChange={(e) => handleFieldChange(field.id, e.target.value)}
+                className={cn(inputClass, "pr-12 text-right form-date-input")}
+                style={inputStyle}
+                aria-invalid={hasError}
+                aria-required={field.required}
+                aria-describedby={ariaDescribedBy}
+              />
+            </div>
             {field.placeholder && <p className="text-xs text-muted-foreground mt-1">{field.placeholder}</p>}
             {errorMessage}
           </div>
@@ -1535,10 +1536,11 @@ export default function PublicFormPage() {
           return {
             ...baseStyles,
             backgroundImage: `url(${formTheme.backgroundImage})`,
-            backgroundSize: 'cover',
+            backgroundSize: formTheme.backgroundFit === 'contain' ? 'contain' : formTheme.backgroundFit === 'fill' ? '100% 100%' : 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             backgroundAttachment: 'fixed',
+            backgroundColor: formTheme.backgroundFit === 'contain' ? '#000' : undefined,
           };
         }
         return { ...baseStyles, backgroundColor: formTheme.backgroundColor };
@@ -1603,7 +1605,14 @@ export default function PublicFormPage() {
       {/* Video background */}
       {formTheme.backgroundType === 'video' && formTheme.backgroundVideo && (
         <video
-          className="fixed inset-0 w-full h-full object-cover z-0"
+          className={cn(
+            "fixed inset-0 z-0",
+            formTheme.backgroundFit === 'contain'
+              ? "w-full h-full object-contain bg-black"
+              : formTheme.backgroundFit === 'fill'
+                ? "w-full h-full object-fill"
+                : "w-full h-full object-cover"
+          )}
           src={formTheme.backgroundVideo}
           autoPlay
           muted
@@ -1622,8 +1631,10 @@ export default function PublicFormPage() {
           className="fixed inset-0 z-0"
           style={{
             backgroundImage: `url(${formTheme.backgroundImage})`,
-            backgroundSize: 'cover',
+            backgroundSize: formTheme.backgroundFit === 'contain' ? 'contain' : formTheme.backgroundFit === 'fill' ? '100% 100%' : 'cover',
             backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundColor: formTheme.backgroundFit === 'contain' ? '#000' : undefined,
             filter: `blur(${formTheme.backgroundBlur}px)`,
             transform: 'scale(1.1)',
           }}
@@ -1645,7 +1656,7 @@ export default function PublicFormPage() {
         <div className={cn("rounded-4xl border px-4 py-3 flex items-center justify-between gap-3 transition-all duration-300", glassHeader)}>
           {/* Logo */}
           <div className="flex items-center gap-3 flex-1 min-w-0">
-            <img src="/ruknylogo.svg" alt="Rukny" className="h-24 w-auto flex-shrink-0" />
+            <img src="/ruknylogo.svg" alt="Rukny" className="h-12 w-auto flex-shrink-0" />
           </div>
 
           {/* Actions */}

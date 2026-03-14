@@ -2,6 +2,13 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // Increase body size limit for file uploads through proxy
+  serverExternalPackages: [],
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '55mb',
+    },
+  },
   // 🔒 Security headers
   headers: async () => [
     {

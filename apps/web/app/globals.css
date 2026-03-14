@@ -249,3 +249,40 @@ textarea,
 select {
   @apply transition-all duration-200;
 }
+
+/* ═════════════════════════════════════════════════════════════════════ */
+/* Date/Time Input Styling (RTL-compatible)                            */
+/* ═════════════════════════════════════════════════════════════════════ */
+
+/* Hide native browser calendar/clock icons to avoid overlap with custom icons */
+.form-date-input::-webkit-calendar-picker-indicator {
+  position: absolute;
+  left: 12px;
+  right: auto;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.form-date-input::-webkit-datetime-edit {
+  direction: ltr;
+  text-align: left;
+  padding-left: 8px;
+}
+
+.form-date-input::-webkit-datetime-edit-fields-wrapper {
+  direction: ltr;
+}
+
+/* Firefox: ensure the date value is displayed properly */
+.form-date-input {
+  text-align: left;
+  direction: ltr;
+}
+
+/* Ensure the input container stays RTL for the icon positioning */
+[dir="rtl"] .form-date-input {
+  direction: ltr;
+  unicode-bidi: embed;
+}

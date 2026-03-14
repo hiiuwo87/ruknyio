@@ -69,19 +69,16 @@ function getParentInfo(pathname: string) {
 export function DashboardNav() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
-
-  // Hide nav on form responses pages (they have their own header)
-  if (/\/app\/forms\/[^/]+\/responses/.test(pathname)) return null;
-
-  const breadcrumbs = buildBreadcrumbs(pathname);
-  const parent = getParentInfo(pathname);
   const [notificationCount, setNotificationCount] = useState(0);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const fetchedRef = useRef(false);
 
+  const isResponsesPage = /\/app\/forms\/[^/]+\/responses/.test(pathname);
+
   // Fetch notification count
   useEffect(() => {
+    if (isResponsesPage) return;
     const fetchCount = async () => {
       try {
         const res = await fetch('/api/notifications/unread-count', { credentials: 'include' });
@@ -99,12 +96,18 @@ export function DashboardNav() {
       const t = setInterval(fetchCount, 5 * 60 * 1000);
       return () => clearInterval(t);
     }
-  }, [user]);
+  }, [user, isResponsesPage]);
 
   // Focus search input when opened
   useEffect(() => {
     if (isSearchOpen) searchInputRef.current?.focus();
   }, [isSearchOpen]);
+
+  // Hide nav on form responses pages (they have their own header)
+  if (isResponsesPage) return null;
+
+  const breadcrumbs = buildBreadcrumbs(pathname);
+  const parent = getParentInfo(pathname);
 
   return (
     <header className="absolute top-0 inset-x-0 z-20 pointer-events-none">

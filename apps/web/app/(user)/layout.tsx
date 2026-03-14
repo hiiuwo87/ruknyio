@@ -28,7 +28,7 @@ export default async function DashboardLayout({
 
             {/* Scrollable content */}
             <main className="h-full overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-              <div className="mx-auto w-full max-w-7xl px-4 pt-14 pb-20 md:pb-6 sm:px-6">
+              <div className="mx-auto w-full max-w-7xl px-4 pt-12 pb-12 md:pb-6 sm:px-6">
                 {children}
               </div>
             </main>

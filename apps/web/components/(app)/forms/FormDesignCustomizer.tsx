@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Palette,
@@ -49,23 +49,15 @@ const GRADIENT_PRESETS: GradientPreset[] = [
 ];
 
 // ============================================
-// Wallpaper Presets (from /public/Wallpaper/)
+// Wallpaper Presets (fetched from API)
 // ============================================
 
 interface WallpaperPreset {
   id: string;
   nameAr: string;
-  file: string;
+  url: string;
   fileType: 'image' | 'video';
 }
-
-const WALLPAPER_PRESETS: WallpaperPreset[] = [
-  { id: 'nature-cartoon', nameAr: 'طبيعة كرتونية', file: '/Wallpaper/nature-cartoon.jfif', fileType: 'image' },
-  { id: 'cat-walk', nameAr: 'عش كالقطط', file: '/Wallpaper/cat-walk.mp4', fileType: 'video' },
-  { id: 'scenery', nameAr: 'مشهد طبيعي', file: '/Wallpaper/scenery-nature.mp4', fileType: 'video' },
-  { id: 'pixel-warriors', nameAr: 'محاربو البكسل', file: '/Wallpaper/pixel-warriors-dark.mp4', fileType: 'video' },
-  { id: 'skelton-dance', nameAr: 'رقصة الهياكل العظمية', file: '/Wallpaper/ruknyio-2.mp4', fileType: 'video' },
-];
 
 // ============================================
 // Font Options
@@ -193,6 +185,16 @@ interface FormDesignCustomizerProps {
 export function FormDesignCustomizer({ theme, onChange }: FormDesignCustomizerProps) {
   const [activeTab, setActiveTab] = useState<'background' | 'fonts' | 'colors' | 'button'>('background');
   const [bgSubTab, setBgSubTab] = useState<'gradients' | 'wallpapers'>('wallpapers');
+  const [wallpapers, setWallpapers] = useState<WallpaperPreset[]>([]);
+  const [wallpapersLoading, setWallpapersLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/v1/wallpapers')
+      .then((res) => res.ok ? res.json() : [])
+      .then((data: WallpaperPreset[]) => setWallpapers(data))
+      .catch(() => setWallpapers([]))
+      .finally(() => setWallpapersLoading(false));
+  }, []);
 
   const updateTheme = useCallback((updates: Partial<FormTheme>) => {
     onChange({ ...theme, ...updates });
@@ -216,11 +218,12 @@ export function FormDesignCustomizer({ theme, onChange }: FormDesignCustomizerPr
 
   // Apply wallpaper preset
   const applyWallpaper = useCallback((preset: WallpaperPreset) => {
+    const stableUrl = `/api/v1/wallpapers/${preset.id}/file`;
     updateTheme({
       backgroundType: preset.fileType === 'video' ? 'video' : 'image',
       backgroundPreset: preset.id,
-      backgroundImage: preset.fileType === 'image' ? preset.file : undefined,
-      backgroundVideo: preset.fileType === 'video' ? preset.file : undefined,
+      backgroundImage: preset.fileType === 'image' ? stableUrl : undefined,
+      backgroundVideo: preset.fileType === 'video' ? stableUrl : undefined,
       backgroundGradient: undefined,
       backgroundBlur: 0,
       backgroundOverlay: 20,
@@ -303,8 +306,15 @@ export function FormDesignCustomizer({ theme, onChange }: FormDesignCustomizerPr
             {/* ── Wallpapers Sub-tab ── */}
             {bgSubTab === 'wallpapers' && (
               <div className="space-y-2">
+                {wallpapersLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                  </div>
+                ) : wallpapers.length === 0 ? (
+                  <p className="text-xs text-muted-foreground text-center py-4">لا توجد خلفيات متاحة</p>
+                ) : (
                 <div className="grid grid-cols-3 gap-2">
-                  {WALLPAPER_PRESETS.map((preset) => {
+                  {wallpapers.map((preset) => {
                     const isSelected = theme.backgroundPreset === preset.id;
                     return (
                       <button
@@ -321,7 +331,7 @@ export function FormDesignCustomizer({ theme, onChange }: FormDesignCustomizerPr
                         <div className="aspect-square relative bg-muted overflow-hidden">
                           {preset.fileType === 'video' ? (
                             <video
-                              src={preset.file}
+                              src={preset.url}
                               className="w-full h-full object-cover"
                               muted
                               autoPlay
@@ -334,7 +344,7 @@ export function FormDesignCustomizer({ theme, onChange }: FormDesignCustomizerPr
                             />
                           ) : (
                             <img
-                              src={preset.file}
+                              src={preset.url}
                               alt={preset.nameAr}
                               className="w-full h-full object-cover"
                               style={{
@@ -367,6 +377,7 @@ export function FormDesignCustomizer({ theme, onChange }: FormDesignCustomizerPr
                     );
                   })}
                 </div>
+                )}
               </div>
             )}
 
@@ -446,6 +457,34 @@ export function FormDesignCustomizer({ theme, onChange }: FormDesignCustomizerPr
                   onChange={(e) => updateTheme({ backgroundOverlay: Number(e.target.value) })}
                   className="w-full h-1.5 bg-muted rounded-full appearance-none cursor-pointer accent-primary"
                 />
+              </div>
+            )}
+
+            {/* Background Fit Mode (for image/video) */}
+            {hasMediaBg && (
+              <div className="space-y-2 pt-1">
+                <label className="text-xs font-medium text-foreground/80">وضع العرض</label>
+                <div className="flex items-center gap-1 p-0.5 bg-muted/40 rounded-lg">
+                  {([
+                    { value: 'cover' as const, label: 'ملء الشاشة' },
+                    { value: 'contain' as const, label: 'إظهار الكل' },
+                    { value: 'fill' as const, label: 'تمديد' },
+                  ]).map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => updateTheme({ backgroundFit: opt.value })}
+                      className={cn(
+                        "flex-1 py-1.5 px-2 rounded-md text-[11px] font-medium transition-all text-center",
+                        (theme.backgroundFit || 'cover') === opt.value
+                          ? "bg-background text-foreground shadow-sm"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </motion.div>
