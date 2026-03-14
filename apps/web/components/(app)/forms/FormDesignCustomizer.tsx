@@ -459,34 +459,6 @@ export function FormDesignCustomizer({ theme, onChange }: FormDesignCustomizerPr
                 />
               </div>
             )}
-
-            {/* Background Fit Mode (for image/video) */}
-            {hasMediaBg && (
-              <div className="space-y-2 pt-1">
-                <label className="text-xs font-medium text-foreground/80">وضع العرض</label>
-                <div className="flex items-center gap-1 p-0.5 bg-muted/40 rounded-lg">
-                  {([
-                    { value: 'cover' as const, label: 'ملء الشاشة' },
-                    { value: 'contain' as const, label: 'إظهار الكل' },
-                    { value: 'fill' as const, label: 'تمديد' },
-                  ]).map((opt) => (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => updateTheme({ backgroundFit: opt.value })}
-                      className={cn(
-                        "flex-1 py-1.5 px-2 rounded-md text-[11px] font-medium transition-all text-center",
-                        (theme.backgroundFit || 'cover') === opt.value
-                          ? "bg-background text-foreground shadow-sm"
-                          : "text-muted-foreground hover:text-foreground"
-                      )}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
           </motion.div>
         )}
 
