@@ -13,7 +13,7 @@ export default async function DashboardLayout({
   const user = await requireCompleteProfile();
 
   return (
-    <div dir="rtl" className="flex h-screen bg-background">
+    <div  lang="ar" dir="rtl" className="flex h-screen bg-background">
       {/* Sidebar - Settings or Dashboard */}
       <SidebarWrapper />
 

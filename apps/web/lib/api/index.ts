@@ -16,3 +16,5 @@ export * from './auth';
 export * from './profiles';
 export * from './stores';
 export * from './events';
+export * from './social-links';
+export * from './instagram';

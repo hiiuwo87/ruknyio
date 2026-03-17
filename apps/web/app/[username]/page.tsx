@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  MapPin, 
-  Calendar, 
-  Link2, 
-  Share2, 
+import {
+  MapPin,
+  Calendar,
+  Link2,
+  Share2,
   QrCode,
   CalendarDays,
   Users,
@@ -27,7 +27,9 @@ import {
   MessageCircle,
   ClipboardList,
   Clock,
-  ArrowLeft
+  ArrowLeft,
+  ExternalLink,
+  Heart,
 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -38,6 +40,8 @@ import { AuthClient } from '@/lib/auth/auth-client';
 import { getCsrfToken } from '@/lib/api/client';
 import { toast } from '@/components/toast-provider';
 import { API_URL } from '@/lib/config';
+import { getBrandByKey, getLocalIconPathByKey, extractDomain, getFaviconUrl } from '@/lib/brand-icons';
+import { getPublicInstagramData, type InstagramBlock, type InstagramMedia } from '@/lib/api/instagram';
 
 // Helper to check if user has valid token
 const hasValidToken = (): boolean => {
@@ -184,6 +188,8 @@ export default function PublicProfilePage() {
   const [followLoading, setFollowLoading] = useState(false);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const [currentBanner, setCurrentBanner] = useState(0);
+  const [igBlocks, setIgBlocks] = useState<InstagramBlock[]>([]);
+  const [igMedia, setIgMedia] = useState<InstagramMedia[]>([]);
 
   // Theme color - Teal/Cyan for profiles
   const themeColor = '#0D9488';
@@ -267,6 +273,15 @@ export default function PublicProfilePage() {
           }
         } catch {
           setForms([]);
+        }
+
+        // Fetch Instagram blocks
+        try {
+          const igData = await getPublicInstagramData(profileData.user.id);
+          setIgBlocks(igData.blocks || []);
+          setIgMedia(igData.media?.data || []);
+        } catch {
+          // ignore
         }
 
       } catch (err: any) {
@@ -762,8 +777,11 @@ export default function PublicProfilePage() {
               >
                 {profile.socialLinks && profile.socialLinks.length > 0 ? (
                   profile.socialLinks.map((link) => {
-                    const Icon = socialIcons[link.platform?.toLowerCase()] || Link2;
-                    const gradient = socialGradients[link.platform?.toLowerCase()] || socialGradients.custom;
+                    const platformKey = link.platform?.toLowerCase() ?? '';
+                    const brand = getBrandByKey(platformKey);
+                    const localIconPath = getLocalIconPathByKey(platformKey);
+                    const domain = extractDomain(link.url);
+                    const gradient = socialGradients[platformKey] || socialGradients.custom;
                     return (
                       <a
                         key={link.id}
@@ -772,9 +790,32 @@ export default function PublicProfilePage() {
                         rel="noopener noreferrer"
                         className="flex items-center gap-3 p-3 bg-card rounded-2xl border border-border/60 hover:shadow-md transition-all group"
                       >
-                        <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br text-white", gradient)}>
-                          <Icon className="w-5 h-5" />
-                        </div>
+                        {localIconPath ? (
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white dark:bg-zinc-900 border border-border/40 shrink-0">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={localIconPath} alt={platformKey} className="w-5 h-5" />
+                          </div>
+                        ) : brand ? (
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `#${brand.hex}` }}>
+                            <svg role="img" viewBox="0 0 24 24" fill="currentColor" aria-label={brand.title} className="w-5 h-5 text-white">
+                              <path d={brand.path} />
+                            </svg>
+                          </div>
+                        ) : domain ? (
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white dark:bg-zinc-900 border border-border/40 shrink-0 overflow-hidden">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={getFaviconUrl(domain, 64)}
+                              alt={domain}
+                              className="w-5 h-5"
+                              onError={(e) => { (e.target as HTMLImageElement).src = ''; }}
+                            />
+                          </div>
+                        ) : (
+                          <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br text-white shrink-0", gradient)}>
+                            <Link2 className="w-5 h-5" />
+                          </div>
+                        )}
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-foreground truncate">{link.title || link.platform}</p>
                           <p className="text-xs text-muted-foreground truncate">{link.url}</p>
@@ -783,12 +824,120 @@ export default function PublicProfilePage() {
                       </a>
                     );
                   })
-                ) : (
+                ) : igBlocks.length === 0 ? (
                   <div className="text-center py-12 text-muted-foreground">
                     <Link2 className="w-12 h-12 mx-auto mb-3 text-muted/40" />
                     <p>لا توجد روابط</p>
                   </div>
-                )}
+                ) : null}
+
+                {/* Instagram Blocks */}
+                {igBlocks.map((block) => {
+                  const isGrid = block.type === 'GRID';
+                  const mediaItems = isGrid ? igMedia.slice(0, 9) : igMedia.slice(0, 6);
+                  if (mediaItems.length === 0) return null;
+
+                  return (
+                    <div key={block.id} className="rounded-2xl border border-border/60 bg-card overflow-hidden">
+                      {/* Block header */}
+                      <div className="flex items-center gap-2.5 px-4 py-3 border-b border-border/40">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/icons/instagram.svg" alt="Instagram" className="w-5 h-5" />
+                        <p className="text-sm font-semibold">
+                          {isGrid ? 'شبكة إنستغرام' : 'أحدث المنشورات'}
+                        </p>
+                      </div>
+
+                      <div className="p-2.5">
+                        {isGrid ? (
+                          /* Grid View (3×3) */
+                          <div className="grid grid-cols-3 gap-1">
+                            {mediaItems.map((item) => {
+                              const gridLink = block.gridLinks.find((gl) => gl.mediaId === item.id);
+                              return (
+                                <a
+                                  key={item.id}
+                                  href={gridLink?.linkUrl || item.permalink}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="relative aspect-square rounded-lg overflow-hidden group"
+                                >
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img
+                                    src={item.thumbnail_url || item.media_url}
+                                    alt={item.caption || ''}
+                                    className="w-full h-full object-cover"
+                                  />
+                                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                                    {gridLink?.linkUrl ? (
+                                      <Link2 className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    ) : (
+                                      <ExternalLink className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    )}
+                                  </div>
+                                  {gridLink?.linkUrl && (
+                                    <div className="absolute top-1 right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center">
+                                      <Link2 className="w-2.5 h-2.5 text-white" />
+                                    </div>
+                                  )}
+                                  {item.media_type === 'VIDEO' && (
+                                    <div className="absolute top-1 left-1 text-white/80">
+                                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M8 5v14l11-7z" />
+                                      </svg>
+                                    </div>
+                                  )}
+                                </a>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          /* Feed View (horizontal scroll) */
+                          <div className="flex gap-2 overflow-x-auto pb-1 [&::-webkit-scrollbar]:hidden">
+                            {mediaItems.map((item) => (
+                              <a
+                                key={item.id}
+                                href={item.permalink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="shrink-0 w-32 rounded-xl overflow-hidden border border-border/40 hover:shadow-md transition-shadow group"
+                              >
+                                <div className="relative aspect-square">
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img
+                                    src={item.thumbnail_url || item.media_url}
+                                    alt={item.caption || ''}
+                                    className="w-full h-full object-cover"
+                                  />
+                                  {item.media_type === 'VIDEO' && (
+                                    <div className="absolute top-1.5 left-1.5 text-white/80">
+                                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M8 5v14l11-7z" />
+                                      </svg>
+                                    </div>
+                                  )}
+                                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                                    <ExternalLink className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                                  </div>
+                                </div>
+                                <div className="p-2">
+                                  <p className="text-[10px] text-muted-foreground line-clamp-2 leading-relaxed">
+                                    {item.caption || 'بدون وصف'}
+                                  </p>
+                                  {item.like_count != null && (
+                                    <span className="flex items-center gap-0.5 mt-1 text-[9px] text-muted-foreground/60">
+                                      <Heart className="w-2.5 h-2.5" /> {item.like_count}
+                                    </span>
+                                  )}
+                                </div>
+                              </a>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </motion.div>
             )}
 

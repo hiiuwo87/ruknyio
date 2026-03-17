@@ -2,20 +2,30 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  MapPin, 
-  Calendar, 
-  Link2, 
+import {
+  MapPin,
+  Calendar,
+  Link2,
   ExternalLink,
   Users,
   ClipboardList,
   RefreshCw,
   Loader2,
+  Heart,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/providers';
 import { API_URL } from '@/lib/config';
+import { usePhonePreview } from './phone-preview-context';
+import { getBrandByKey, getLocalIconPathByKey } from '@/lib/brand-icons';
+import {
+  getInstagramBlocks,
+  getInstagramMedia,
+  getInstagramStatus,
+  type InstagramBlock,
+  type InstagramMedia,
+} from '@/lib/api/instagram';
 
 // Types
 interface SocialLink {
@@ -23,6 +33,8 @@ interface SocialLink {
   platform: string;
   url: string;
   title?: string;
+  status?: 'active' | 'hidden';
+  isFeatured?: boolean;
   displayOrder: number;
 }
 
@@ -89,17 +101,35 @@ const getInitials = (name: string): string => {
     .toUpperCase();
 };
 
-// Social Icons Map (simplified)
-const socialIcons: Record<string, any> = {
-  instagram: Link2,
-  twitter: Link2,
-  x: Link2,
-  linkedin: Link2,
-  youtube: Link2,
-  github: Link2,
-  website: Link2,
-  custom: Link2,
-};
+// Brand icon for preview
+function PreviewLinkIcon({ platform, themeColor }: { platform: string; themeColor: string }) {
+  const localPath = getLocalIconPathByKey(platform);
+  const brand = getBrandByKey(platform);
+
+  if (localPath) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={localPath} alt={platform} className="w-3 h-3" />
+    );
+  }
+
+  if (brand) {
+    return (
+      <svg
+        role="img"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-label={brand.title}
+        className="w-3 h-3"
+        style={{ color: themeColor }}
+      >
+        <path d={brand.path} />
+      </svg>
+    );
+  }
+
+  return <Link2 className="w-3 h-3" style={{ color: themeColor }} />;
+}
 
 interface PhonePreviewProps {
   className?: string;
@@ -107,13 +137,15 @@ interface PhonePreviewProps {
 
 export function PhonePreview({ className }: PhonePreviewProps) {
   const { user } = useAuth();
-  const [profile, setProfile] = useState<PublicProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { profile, setProfile } = usePhonePreview();
+  const [loading, setLoading] = useState(!profile);
   const [currentBanner, setCurrentBanner] = useState(0);
   const [activeTab, setActiveTab] = useState<'links' | 'events' | 'forms'>('links');
   const [events, setEvents] = useState<EventItem[]>([]);
   const [forms, setForms] = useState<PublicForm[]>([]);
   const [contentLoading, setContentLoading] = useState(false);
+  const [igBlocks, setIgBlocks] = useState<InstagramBlock[]>([]);
+  const [igMedia, setIgMedia] = useState<InstagramMedia[]>([]);
 
   const themeColor = '#0D9488';
 
@@ -138,8 +170,11 @@ export function PhonePreview({ className }: PhonePreviewProps) {
       }
     };
 
-    fetchProfile();
-  }, [user?.id]);
+    // Only fetch if profile not already set (to avoid double fetching)
+    if (!profile) {
+      fetchProfile();
+    }
+  }, [user?.id, profile, setProfile]);
 
   // Auto-slide banners
   useEffect(() => {
@@ -204,6 +239,25 @@ export function PhonePreview({ className }: PhonePreviewProps) {
           setForms(formsData?.forms || []);
         } else {
           setForms([]);
+        }
+
+        // Fetch Instagram blocks + media (only if connected)
+        try {
+          const status = await getInstagramStatus();
+          if (status.connected) {
+            const [blocks, mediaResult] = await Promise.all([
+              getInstagramBlocks(),
+              getInstagramMedia(9),
+            ]);
+            setIgBlocks(blocks.filter((b) => b.isActive));
+            setIgMedia(mediaResult.data || []);
+          } else {
+            setIgBlocks([]);
+            setIgMedia([]);
+          }
+        } catch {
+          setIgBlocks([]);
+          setIgMedia([]);
         }
       } catch {
         if (!controller.signal.aborted) {
@@ -412,8 +466,7 @@ export function PhonePreview({ className }: PhonePreviewProps) {
 
                 {/* Links */}
                 <div className="mt-3 space-y-2">
-                  {activeTab === 'links' && profile?.socialLinks?.map((link) => {
-                    const Icon = socialIcons[link.platform?.toLowerCase()] || Link2;
+                  {activeTab === 'links' && profile?.socialLinks?.filter(link => link.status !== 'hidden')?.map((link) => {
                     return (
                       <div
                         key={link.id}
@@ -424,7 +477,7 @@ export function PhonePreview({ className }: PhonePreviewProps) {
                             className="w-6 h-6 rounded-md flex items-center justify-center"
                             style={{ backgroundColor: `${themeColor}15` }}
                           >
-                            <Icon className="w-3 h-3" style={{ color: themeColor }} />
+                            <PreviewLinkIcon platform={link.platform?.toLowerCase() ?? ''} themeColor={themeColor} />
                           </div>
                           <span className="text-[10px] font-medium text-gray-900">{link.title || link.platform}</span>
                         </div>
@@ -433,12 +486,60 @@ export function PhonePreview({ className }: PhonePreviewProps) {
                     );
                   })}
                   
-                  {activeTab === 'links' && (!profile?.socialLinks || profile.socialLinks.length === 0) && (
+                  {activeTab === 'links' && (!profile?.socialLinks || profile.socialLinks.length === 0) && igBlocks.length === 0 && (
                     <div className="text-center py-6 text-gray-400">
                       <Link2 className="w-6 h-6 mx-auto mb-1" />
                       <p className="text-[9px]">لا توجد روابط</p>
                     </div>
                   )}
+
+                  {/* Instagram Blocks in links tab */}
+                  {activeTab === 'links' && igBlocks.map((block) => {
+                    const isGrid = block.type === 'GRID';
+                    const items = isGrid ? igMedia.slice(0, 9) : igMedia.slice(0, 6);
+                    if (items.length === 0) return null;
+
+                    return (
+                      <div key={block.id} className="rounded-lg border border-gray-100 overflow-hidden">
+                        <div className="flex items-center gap-1.5 px-2 py-1.5 border-b border-gray-50">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src="/icons/instagram.svg" alt="Instagram" className="w-3 h-3" />
+                          <span className="text-[9px] font-semibold text-gray-700">
+                            {isGrid ? 'شبكة إنستغرام' : 'أحدث المنشورات'}
+                          </span>
+                        </div>
+                        <div className="p-1.5">
+                          {isGrid ? (
+                            <div className="grid grid-cols-3 gap-0.5">
+                              {items.map((m) => (
+                                <div key={m.id} className="relative aspect-square rounded overflow-hidden">
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img src={m.thumbnail_url || m.media_url} alt="" className="w-full h-full object-cover" />
+                                  {block.gridLinks.find((gl) => gl.mediaId === m.id)?.linkUrl && (
+                                    <div className="absolute top-0.5 right-0.5 w-3 h-3 bg-emerald-500 rounded-full flex items-center justify-center">
+                                      <Link2 className="w-1.5 h-1.5 text-white" />
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="flex gap-1 overflow-x-auto [&::-webkit-scrollbar]:hidden">
+                              {items.map((m) => (
+                                <div key={m.id} className="shrink-0 w-16 rounded overflow-hidden border border-gray-50">
+                                  <div className="aspect-square">
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img src={m.thumbnail_url || m.media_url} alt="" className="w-full h-full object-cover" />
+                                  </div>
+                                  <p className="text-[7px] text-gray-400 p-1 line-clamp-1">{m.caption || 'بدون وصف'}</p>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
 
                   {activeTab === 'events' && (
                     <>

@@ -35,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("font-sans", ibmPlexSansArabic.variable)}>
+    <html lang="ar" dir="rtl" className={cn("font-sans", ibmPlexSansArabic.variable)}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

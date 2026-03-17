@@ -53,6 +53,7 @@ import { GoogleSheetsModule } from './integrations/google-sheets/google-sheets.m
 import { GoogleDriveModule } from './integrations/google-drive/google-drive.module';
 import { TelegramModule } from './integrations/telegram/telegram.module';
 import { WhatsappModule } from './integrations/whatsapp';
+import { InstagramModule } from './integrations/instagram/instagram.module';
 // import { PushNotificationsModule } from './integrations/push-notifications/push-notifications.module'; // Disabled - needs configuration
 import { DevModule } from './dev/dev.module';
 
@@ -127,6 +128,7 @@ import { SharedModule } from './shared/modules/shared.module';
     GoogleDriveModule,
     TelegramModule,
     WhatsappModule, // 📱 WhatsApp Checkout System
+    InstagramModule,
     // PushNotificationsModule, // 🔔 Web Push Notifications - Disabled (needs configuration)
     ...(process.env.NODE_ENV !== 'production' ? [DevModule] : []),
   ],

@@ -2,9 +2,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, Reorder } from 'framer-motion';
-import { AddLinkDialog } from '@/components/(app)/link/add-link-dialog';
-import { EditLinkDialog } from '@/components/(app)/link/edit-link-dialog';
-import { LinkCard } from '@/components/(app)/link/link-card';
 import {
   Instagram,
   Youtube,
@@ -18,6 +15,10 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/providers';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { API_URL } from '@/lib/config';
+import { AddLinkDialog } from './add-link-dialog';
+import { EditLinkDialog } from './edit-link-dialog';
+import { LinkCard } from './link-card';
+import { InstagramBlocksList } from './instagram-blocks';
 import { getMyLinks, deleteSocialLink, updateSocialLink, reorderSocialLinks } from '@/lib/api/social-links';
 import { useToast } from '@/components/ui/toast';
 import { usePhonePreview, type ProfileData } from '@/components/(app)/shared/phone-preview-context';
@@ -34,7 +35,6 @@ interface SocialLink {
   displayOrder: number;
   status?: string;
   totalClicks?: number;
-}
 }
 
 /* ------------------------------------------------------------------ */
@@ -87,6 +87,7 @@ export function ProfileHeader() {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editingLinkId, setEditingLinkId] = useState<string | null>(null);
 
+  // Fetch profile
   useEffect(() => {
     const fetchProfile = async () => {
       if (!user?.id) return;
@@ -105,7 +106,7 @@ export function ProfileHeader() {
     fetchProfile();
   }, [user?.id]);
 
-  // Load links when dialog opens  
+  // Fetch links when dialog opens or after adding
   const loadLinks = useCallback(async () => {
     if (!user?.id) return;
     try {
@@ -181,15 +182,15 @@ export function ProfileHeader() {
     [],
   );
 
-  const editingLink = editingLinkId ? links.find((l) => l.id === editingLinkId) : null;
-
   const handleReorder = useCallback(
     async (newOrder: SocialLink[]) => {
       const reordered = newOrder.map((link, index) => ({ ...link, displayOrder: index }));
+      // Optimistic update
       setLinks(reordered);
       if (profile) {
         setProfile({ ...profile, socialLinks: reordered });
       }
+      // Persist to backend (fire-and-forget, silent on error)
       try {
         await reorderSocialLinks(reordered.map((l) => l.id));
       } catch {
@@ -198,6 +199,8 @@ export function ProfileHeader() {
     },
     [profile, setProfile],
   );
+
+  const editingLink = editingLinkId ? links.find((l) => l.id === editingLinkId) : null;
 
   const handleToggleStatus = useCallback(
     async (id: string, newStatus: string) => {
@@ -344,14 +347,12 @@ export function ProfileHeader() {
         Add
       </button>
 
-      {/* Add Link Dialog */}
       <AddLinkDialog 
         open={showAddDialog} 
         onOpenChange={setShowAddDialog}
         onAddSuccess={handleAddSuccess}
       />
 
-      {/* Edit Link Dialog */}
       <EditLinkDialog
         open={showEditDialog}
         onOpenChange={setShowEditDialog}
@@ -418,6 +419,11 @@ export function ProfileHeader() {
           </Reorder.Group>
         </div>
       )}
+
+      {/* ── Instagram Blocks ── */}
+      <div className="mt-6">
+        <InstagramBlocksList />
+      </div>
     </motion.div>
   );
 }

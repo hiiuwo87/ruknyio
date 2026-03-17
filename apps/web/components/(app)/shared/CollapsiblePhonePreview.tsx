@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { PanelRightClose, PanelRightOpen, Smartphone } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PhonePreview } from './PhonePreview';
-import { PhonePreviewContext } from './phone-preview-context';
+import { PhonePreviewContext, type ProfileData } from './phone-preview-context';
 
 const STORAGE_KEY = 'rukny-phone-preview-collapsed';
 
@@ -17,6 +17,7 @@ export function CollapsiblePhonePreview({ children }: { children?: React.ReactNo
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [profile, setProfile] = useState<ProfileData | null>(null);
 
   const forceOpen = FORCE_OPEN_ROUTES.some((r) => pathname === r || pathname.startsWith(r + '/'));
 
@@ -50,7 +51,7 @@ export function CollapsiblePhonePreview({ children }: { children?: React.ReactNo
   if (!mounted) return <>{children}</>;
 
   return (
-    <PhonePreviewContext.Provider value={{ collapsed, toggle }}>
+    <PhonePreviewContext.Provider value={{ collapsed, toggle, profile, setProfile }}>
       {children}
       <div className="hidden xl:flex h-full relative">
         {/* Toggle Button */}

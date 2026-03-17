@@ -39,6 +39,8 @@ model User {
   telegramConnectedAt    DateTime?
   isDeactivated          Boolean                 @default(false)
   deactivatedAt          DateTime?
+  instagramConnection    InstagramConnection?
+  instagramBlocks        InstagramBlock[]
   addresses              addresses[]
   calendar_integrations  calendar_integrations[]
   carts                  carts?
@@ -142,6 +144,56 @@ model SocialLink {
   @@index([profileId, displayOrder])
   @@index([status])
   @@map("social_links")
+}
+
+model InstagramConnection {
+  id              String    @id @default(uuid())
+  userId          String    @unique
+  accessToken     String
+  tokenExpiry     DateTime?
+  igUserId        String
+  username        String
+  name            String?
+  profilePicUrl   String?
+  followersCount  Int?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("instagram_connections")
+}
+
+model InstagramBlock {
+  id            String              @id @default(uuid())
+  userId        String
+  type          InstagramBlockType
+  displayOrder  Int                 @default(0)
+  isActive      Boolean             @default(true)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gridLinks     InstagramGridLink[]
+
+  @@map("instagram_blocks")
+}
+
+model InstagramGridLink {
+  id        String         @id @default(uuid())
+  blockId   String
+  mediaId   String
+  linkUrl   String?
+  linkTitle String?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  block     InstagramBlock @relation(fields: [blockId], references: [id], onDelete: Cascade)
+
+  @@unique([blockId, mediaId])
+  @@map("instagram_grid_links")
+}
+
+enum InstagramBlockType {
+  GRID
+  FEED
 }
 
 model LinkGroup {
