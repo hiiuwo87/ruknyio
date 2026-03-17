@@ -24,6 +24,7 @@ import {
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
+import { Throttle } from '@nestjs/throttler';
 import { JwtAuthGuard } from '../../../core/common/guards/auth/jwt-auth.guard';
 import { SocialLinksService } from './social-links.service';
 import { UploadService } from '../../../infrastructure/upload/upload.service';
@@ -38,6 +39,7 @@ import {
 
 @ApiTags('Social Links')
 @Controller('social-links')
+@Throttle({ default: { limit: 60, ttl: 60000 } })
 export class SocialLinksController {
   constructor(
     private socialLinksService: SocialLinksService,
